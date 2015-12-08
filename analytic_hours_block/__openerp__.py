@@ -52,6 +52,7 @@ you can track and follow how much has been used.
         "report.xml",
         "security/hours_block_security.xml",
         "security/ir.model.access.csv",
+        "wizard/print_hours_block.xml"
     ],
     "active": False,
     "installable": True
