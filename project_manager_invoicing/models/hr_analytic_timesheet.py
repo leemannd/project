@@ -19,14 +19,11 @@
 #
 ##############################################################################
 
-from openerp.osv import orm, fields
+from openerp.osv import orm
+
 
 class hr_timesheet_line(orm.Model):
     _inherit = "hr.analytic.timesheet"
-
-# TODO 1.regarder méthode qui valide dans aal
-# 2. faire appel à cette méthode depuis ici (même nom de méthode)
-# 3. exemple se trouve dans specific pour la gestion
 
     def action_confirm(self, cr, uid, ids, context=None):
         timesheet_lines = self.browse(cr, uid, ids, context=context)
