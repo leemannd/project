@@ -6,15 +6,16 @@ from odoo import _
 
 
 PYTHON_CODE_DEFAULT = """
-<self> is the project for which this indicator is computed
-<date> is the date at which the computation is done
-<green>, <orange> and <red> are strings containing the RGB code for the colors
+# <self> is the project for which this indicator is computed
+# <date> is the date at which the computation is done
+# <green>, <orange> and <red> are strings containing the RGB code of colors
+#
+# The code must set the value of the following variables
+# <value>: a float or boolean or string
+#         (depending on the value_type of the indicator)
+# <color>: a string containing the RGB code associated
+#         to the value of the indicator
 
-the code must set the value of the following variables
-<value>: a float or boolean or string
-        (depending on the value_type of the indicator)
-<color>: a string containing the RGB code associated
-        to the value of the indicator
 """
 
 INDICATOR_STATUS = [('ok', _('OK')),

@@ -91,7 +91,7 @@ class ProjectStatusIndicatorValue(models.Model):
 
     _order = 'project_id, date, sequence'
 
-    @api.depends('value_type', 'value_boolean', 'value_float', 'value_text')
+    @api.depends('value_type', 'value_boolean', 'value_numeric', 'value_text')
     def _compute_display_value(self):
         for rec in self:
             rec.display_value = '%s' % rec['value_'+rec.value_type]
@@ -99,7 +99,7 @@ class ProjectStatusIndicatorValue(models.Model):
     indicator_id = fields.Many2one(comodel_name='project.status.indicator',
                                    required=True)
     report_id = fields.Many2one(comodel_name='project.status.report',
-                                required=True)
+                                )
     project_id = fields.Many2one(comodel_name='project.project',
                                  related='report_id.project_id',
                                  store=True,
@@ -117,7 +117,7 @@ class ProjectStatusIndicatorValue(models.Model):
     value_type = fields.Selection(related='indicator_id.value_type',
                                   store=True,
                                   readonly=True)
-    value_float = fields.Float()
+    value_numeric = fields.Float()
     value_boolean = fields.Boolean()
     value_text = fields.Text()
     display_value = fields.Char(string='Value',

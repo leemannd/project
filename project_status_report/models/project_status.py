@@ -20,46 +20,8 @@ class ProjectStatusReport(models.Model):
         project_id.name + ' ' + date
         """
         for rec in self:
-            rec.name = '%s %s' % (self.project_id.name or "",
-                                  fields.Datetime.to_string(self.date)
-                                  )
+            rec.name = '%s %s' % (self.project_id.name or "", self.date)
 
-    date = fields.Date(required=True,
-                       default=fields.Date.today(),
-                       states={'draft': [('readonly', True)]})
-    project_id = fields.Many2one(comodel_name='project.project',
-                                 required=True,
-                                 states={'draft': [('readonly', True)]})
-    name = fields.Char(compute='_compute_name',
-                       store=True,
-                       states={'draft': [('readonly', True)]})
-    cost_status = fields.Selection(selection=INDICATOR_STATUS,
-                                   states={'draft': [('readonly', True)]})
-    cost_color = fields.Char(states={'draft': [('readonly', True)]})
-    cost_remarks = fields.Html(states={'draft': [('readonly', True)]})
-    quality_status = fields.Selection(selection=INDICATOR_STATUS,
-                                      states={'draft': [('readonly', True)]})
-    quality_color = fields.Char(states={'draft': [('readonly', True)]})
-    quality_remarks = fields.Html(states={'draft': [('readonly', True)]})
-    delay_status = fields.Selection(selection=INDICATOR_STATUS,
-                                    states={'draft': [('readonly', True)]})
-    delay_color = fields.Char(states={'draft': [('readonly', True)]})
-    delay_remarks = fields.Html(states={'draft': [('readonly', True)]})
-    global_status = fields.Selection(selection=INDICATOR_STATUS,
-                                     states={'draft': [('readonly', True)]})
-    global_color = fields.Char(states={'draft': [('readonly', True)]})
-    global_remarks = fields.Html(states={'draft': [('readonly', True)]})
-    risks = fields.Html(states={'draft': [('readonly', True)]})
-    user_id = fields.Many2one(comodel_name='res.users',
-                              related='project_id.user_id',
-                              stored=True,
-                              readonly=True)
-    indicator_ids = fields.One2many('project.status.indicator.value',
-                                    'report_id',
-                                    states={'draft': [('readonly', True)]})
-    task_snapshot_ids = fields.One2many('project.task.snapshot',
-                                        'report_id',
-                                        states={'draft': [('readonly', True)]})
     state = fields.Selection(selection=[('draft', _('Draft')),
                                         ('ready', _('Ready')),
                                         ('published', _('Published'))
@@ -68,6 +30,67 @@ class ProjectStatusReport(models.Model):
                              index=True, track_visibility='onchange',
                              default='draft'
                              )
+    date = fields.Date(required=True,
+                       default=fields.Date.today(),
+                       readonly=True,
+                       states={'draft': [('readonly', False)]})
+    project_id = fields.Many2one(comodel_name='project.project',
+                                 string="Project",
+                                 required=True,
+                                 readonly=True,
+                                 states={'draft': [('readonly', False)]})
+    name = fields.Char(compute='_compute_name',
+                       store=True,
+                       readonly=True,
+                       states={'draft': [('readonly', False)]})
+    cost_status = fields.Selection(selection=INDICATOR_STATUS,
+                                   readonly=True,
+                                   states={'draft': [('readonly', False)]})
+    cost_color = fields.Char(readonly=True,
+                             default='#00ff00',
+                             states={'draft': [('readonly', False)]})
+    cost_remarks = fields.Html(readonly=True,
+                               states={'draft': [('readonly', False)]})
+    quality_status = fields.Selection(selection=INDICATOR_STATUS,
+                                      readonly=True,
+                                      states={'draft': [('readonly', False)]})
+    quality_color = fields.Char(readonly=True,
+                                default='#00ff00',
+                                states={'draft': [('readonly', False)]})
+    quality_remarks = fields.Html(readonly=True,
+                                  states={'draft': [('readonly', False)]})
+    delay_status = fields.Selection(selection=INDICATOR_STATUS,
+                                    readonly=True,
+                                    states={'draft': [('readonly', False)]})
+    delay_color = fields.Char(readonly=True,
+                              default='#00ff00',
+                              states={'draft': [('readonly', False)]})
+    delay_remarks = fields.Html(readonly=True,
+                                states={'draft': [('readonly', False)]})
+    global_status = fields.Selection(selection=INDICATOR_STATUS,
+                                     readonly=True,
+                                     states={'draft': [('readonly', False)]})
+    global_color = fields.Char(readonly=True,
+                               default='#00ff00',
+                               states={'draft': [('readonly', False)]})
+    global_remarks = fields.Html(readonly=True,
+                                 states={'draft': [('readonly', False)]})
+    risks = fields.Html(readonly=True,
+                        states={'draft': [('readonly', False)]})
+    user_id = fields.Many2one(comodel_name='res.users',
+                              related='project_id.user_id',
+                              store=True,
+                              readonly=True)
+    indicator_ids = fields.One2many('project.status.indicator.value',
+                                    'report_id',
+                                    readonly=True,
+                                    states={'draft': [('readonly', False)]})
+    task_snapshot_ids = fields.One2many(
+        'project.task.snapshot',
+        'report_id',
+        readonly=True,
+        states={'draft': [('readonly', False)]}
+    )
 
     @api.multi
     def action_confirm(self):
@@ -78,14 +101,14 @@ class ProjectStatusReport(models.Model):
         self.state = 'published'
 
     @api.model
-    def compute_indicator_values(self, project, report):
+    def compute_indicator_values(self, project, date):
         indicators = self.env['project.status.indicator.value'].browse()
         for indicator in self.env['project.status.indicator'].search([]):
-            indicators |= indicator.compute_value(project, report.date)
+            indicators |= indicator.compute_value(project, date)
         return indicators
 
     @api.model
-    def create_task_snapshots(self, project, report):
+    def create_task_snapshots(self, project):
         tasks = self.env['project.task.snapshot'].browse()
         task_snap_obj = self.env['project.task.snapshot']
         for task in project.task_ids:
@@ -113,25 +136,36 @@ class ProjectStatusReport(models.Model):
         # find last report for the given project
         last_report = self.search([('project_id', '=', project.id),
                                    ('state', '=', 'published')], limit=1)
-        for f in fields:
-            res[f] = last_report[f]
+        if last_report:
+            for f in fields:
+                res[f] = last_report[f]
 
         return res
 
     @api.model
-    def create(self, values):
-        report = super(ProjectStatusReport, self).create(values)
-        last_statuses = self.compute_last_statuses(report.project_id)
-        task_snapshots = self.create_task_snapshots(report.project_id,
-                                                    report)
-        indicator_values = self.compute_indicator_values(report.project_id,
-                                                         report)
-        update_dict = {
-            'indicator_ids': (0, 0, indicator_values.ids),
-            'task_snapshot_ids': (0, 0, task_snapshots.ids),
-        }
-        update_dict.update(last_statuses)
+    def default_get(self, fields):
+        result = super(ProjectStatusReport, self).default_get(fields)
 
-        report.write(update_dict)
+        if self._context.get('active_id'):
+            project = self.env['project.project'].browse(
+                self._context.get('active_id'))
+            result['project_id'] = project.id
+            result.update(self.compute_last_statuses(project))
+        return result
+
+    @api.model
+    def create(self, values):
+        project = self.env['project.project'].browse(values['project_id'])
+
+        task_snapshots = self.create_task_snapshots(project)
+        indicator_values = self.compute_indicator_values(project,
+                                                         values['date'])
+        update_dict = {
+            'indicator_ids': [(6, 0, indicator_values.ids)],
+            'task_snapshot_ids': [(6, 0, task_snapshots.ids)],
+        }
+
+        update_dict.update(values)
+        report = super(ProjectStatusReport, self).create(update_dict)
 
         return report

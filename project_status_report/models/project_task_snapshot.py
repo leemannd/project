@@ -18,8 +18,7 @@ class ProjectTaskSnapshot(models.Model):
                                  store=True,
                                  readonly=True)
     task_id = fields.Many2one(comodel_name='project.task',
-                              required=True,
-                              domain=[('project_id', '=', project_id)])
+                              required=True,)
     name = fields.Char(related='task_id.name', readonly=True)
     user_id = fields.Many2one(comodel_name='res.users', string='User')
     date_deadline = fields.Date()
@@ -63,7 +62,7 @@ class ProjectTaskSnapshot(models.Model):
                     _('User %s tried to create a record') % self.env.user.id)
 
         record = super(ProjectTaskSnapshot, self).create(values)
-        record.onchange_task_id(self)
+        record.onchange_task_id()
         return record
 
     @api.multi

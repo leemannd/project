@@ -8,9 +8,15 @@ from odoo import api, fields, models
 class ProjectProject(models.Model):
     _inherit = 'project.project'
 
+    @api.depends('report_ids')
+    def _compute_report_count(self):
+        for rec in self:
+            rec.report_count = len(self.report_ids)
+
     report_ids = fields.One2many(comodel_name='project.status.report',
                                  inverse_name='project_id',
                                  string='Reports')
+    report_count = fields.Integer(compute='_compute_report_count')
 
     @api.multi
     def action_generate_report(self):

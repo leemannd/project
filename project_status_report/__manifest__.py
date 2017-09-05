@@ -11,5 +11,10 @@
     "category": "Project Management",
     "website": "http://www.camptocamp.com",
     "depends": ["project", "web_widget_color"],
+    "data": [
+        'views/project_status_report.xml',
+        'views/project_status_indicator.xml',
+        'views/project.xml',
+    ],
     "installable": True,
 }
