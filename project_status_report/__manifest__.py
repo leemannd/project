@@ -13,6 +13,7 @@
     "depends": ["project", "web_widget_color"],
     "data": [
         'security/ir.model.access.csv',
+        'data/ir_rules.xml',
         'views/project_status_report.xml',
         'views/project_status_indicator.xml',
         'views/project.xml',
