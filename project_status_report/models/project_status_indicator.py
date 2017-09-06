@@ -59,17 +59,46 @@ class ProjectStatusIndicator(models.Model):
 
         return True
 
-    @api.multi
-    def compute_value(self, project, date):
+    @api.model
+    def _construct_env_dict(self, project, date, **kwargs):
+        """
+
+        """
+        analytic_account = project.analytic_account_id
+        invoices = self.env['account.invoice.line'].search(
+            [('analytic_account_id', '=', analytic_account.id)
+             ]).mapped('invoice_id')
+        sales = self.env['sale.order'].search(
+            [('project_id', '=', analytic_account.id)]
+        )
+        analytic_lines = self.env['account.analytic.line'].search(
+            [('account_id', '=', analytic_account.id)]
+        )
+        timesheets = analytic_lines.filtered(lambda a: a.is_timesheet)
+        non_timesheets = analytic_lines - timesheets
+
         ld = {
             'self': project,
             'date': date,
+            'sales': sales,
+            'invoices': invoices,
+            'analytic_lines': analytic_lines,
+            'timesheets': timesheets,
+            'non_timesheets': non_timesheets,
             'green': '#00FF00',
             'orange': '#FF6600',
             'red': '#FF0000',
             'color': '#00FF00',
             'value': None
         }
+        if kwargs:
+            ld.update(kwargs)
+
+        return ld
+
+    @api.multi
+    def compute_value(self, project, date):
+        ld = self._contruct_env_dict(project, date)
 
         exec self.python_code in ld
 
