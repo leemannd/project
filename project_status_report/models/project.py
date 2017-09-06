@@ -33,3 +33,7 @@ class ProjectProject(models.Model):
                     'project_id': project.id,
                 }
             )
+
+    @api.model
+    def action_generate_report_cron(self):
+        return self.search([]).action_generate_report()

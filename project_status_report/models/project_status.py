@@ -166,6 +166,7 @@ class ProjectStatusReport(models.Model):
         }
 
         update_dict.update(values)
+        update_dict.update(self.compute_last_statuses(project))
         report = super(ProjectStatusReport, self).create(update_dict)
 
         return report
