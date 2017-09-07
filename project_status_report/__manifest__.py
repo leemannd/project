@@ -18,6 +18,7 @@
         'views/project_status_indicator.xml',
         'views/project.xml',
         'data/cron.xml',
+        'data/project_status_indicator.xml',
     ],
     "installable": True,
 }
