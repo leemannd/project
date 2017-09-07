@@ -66,7 +66,7 @@ class ProjectStatusIndicator(models.Model):
         """
         analytic_account = project.analytic_account_id
         invoices = self.env['account.invoice.line'].search(
-            [('analytic_account_id', '=', analytic_account.id)
+            [('account_analytic_id', '=', analytic_account.id)
              ]).mapped('invoice_id')
         sales = self.env['sale.order'].search(
             [('project_id', '=', analytic_account.id)]
@@ -98,7 +98,7 @@ class ProjectStatusIndicator(models.Model):
 
     @api.multi
     def compute_value(self, project, date):
-        ld = self._contruct_env_dict(project, date)
+        ld = self._construct_env_dict(project, date)
 
         exec self.python_code in ld
 
