@@ -12,13 +12,18 @@
     "website": "http://www.camptocamp.com",
     "depends": ["project", "web_widget_color"],
     "data": [
-        'security/ir.model.access.csv',
-        'data/ir_rules.xml',
-        'views/project_status_report.xml',
-        'views/project_status_indicator.xml',
-        'views/project.xml',
+        # Data
         'data/cron.xml',
+        'data/ir_rules.xml',
         'data/project_status_indicator.xml',
+        # Report
+        'report/project_status_report.xml',
+        # Security
+        'security/ir.model.access.csv',
+        # Views
+        'views/project.xml',
+        'views/project_status_indicator.xml',
+        'views/project_status_report.xml',
     ],
     "installable": True,
 }

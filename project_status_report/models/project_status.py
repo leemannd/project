@@ -170,3 +170,11 @@ class ProjectStatusReport(models.Model):
         report = super(ProjectStatusReport, self).create(update_dict)
 
         return report
+
+    def get_evaluation_indicators_for_report(self):
+        return [
+            (_('Cost'), self.cost_color, self.cost_remarks),
+            (_('Quality'), self.quality_color, self.quality_remarks),
+            (_('Delay'), self.delay_color, self.delay_remarks),
+            (_('Global'), self.global_color, self.global_remarks)
+        ]
