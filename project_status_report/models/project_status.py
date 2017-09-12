@@ -83,13 +83,11 @@ class ProjectStatusReport(models.Model):
                               readonly=True)
     indicator_ids = fields.One2many('project.status.indicator.value',
                                     'report_id',
-                                    readonly=True,
-                                    states={'draft': [('readonly', False)]})
+                                    readonly=True)
     task_snapshot_ids = fields.One2many(
         'project.task.snapshot',
         'report_id',
-        readonly=True,
-        states={'draft': [('readonly', False)]}
+        readonly=True
     )
 
     @api.multi

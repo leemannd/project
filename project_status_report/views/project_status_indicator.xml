@@ -61,12 +61,11 @@
         <field name="name">view_status_indicator_value_tree</field>
         <field name="model">project.status.indicator.value</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree create="false" edit="false" delete="false">
                 <field name="indicator_id"/>
                 <field name="project_id"/>
                 <field name="report_id"/>
                 <field name="date"/>
-                <field name="sequence"/>
                 <field name="value_type"/>
                 <field name="value_numeric"/>
                 <field name="value_boolean"/>
