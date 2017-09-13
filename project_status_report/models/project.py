@@ -11,7 +11,7 @@ class ProjectProject(models.Model):
     @api.depends('report_ids')
     def _compute_report_count(self):
         for rec in self:
-            rec.report_count = len(self.report_ids)
+            rec.report_count = len(rec.report_ids)
 
     report_ids = fields.One2many(comodel_name='project.status.report',
                                  inverse_name='project_id',
@@ -20,8 +20,8 @@ class ProjectProject(models.Model):
 
     @api.multi
     def action_generate_report(self):
-        """
-        create a draft status report for project at the current date.
+        """Create a draft status report for project at the current date.
+
         Give 'status_report_creation'=True in the context
         """
         report_obj = self.env['project.status.report']

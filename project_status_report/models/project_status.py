@@ -15,75 +15,92 @@ class ProjectStatusReport(models.Model):
 
     @api.depends('project_id', 'date')
     def _compute_name(self):
-        """
-        Compute the name of the status report.
+        """Compute the name of the status report.
+
         project_id.name + ' ' + date
         """
         for rec in self:
-            rec.name = '%s %s' % (self.project_id.name or "", self.date)
+            rec.name = '%s %s' % (rec.project_id.name or "", rec.date)
 
-    state = fields.Selection(selection=[('draft', _('Draft')),
-                                        ('ready', _('Ready')),
-                                        ('published', _('Published'))
-                                        ],
-                             string='Status', readonly=True, copy=False,
-                             index=True, track_visibility='onchange',
-                             default='draft'
-                             )
-    date = fields.Date(required=True,
-                       default=fields.Date.today(),
-                       readonly=True,
-                       states={'draft': [('readonly', False)]})
-    project_id = fields.Many2one(comodel_name='project.project',
-                                 string="Project",
-                                 required=True,
-                                 readonly=True,
-                                 states={'draft': [('readonly', False)]})
-    name = fields.Char(compute='_compute_name',
-                       store=True,
-                       readonly=True,
-                       states={'draft': [('readonly', False)]})
-    cost_status = fields.Selection(selection=INDICATOR_STATUS,
-                                   readonly=True,
-                                   states={'draft': [('readonly', False)]})
-    cost_color = fields.Char(readonly=True,
-                             default='#00ff00',
-                             states={'draft': [('readonly', False)]})
-    cost_remarks = fields.Html(readonly=True,
-                               states={'draft': [('readonly', False)]})
-    quality_status = fields.Selection(selection=INDICATOR_STATUS,
-                                      readonly=True,
-                                      states={'draft': [('readonly', False)]})
-    quality_color = fields.Char(readonly=True,
-                                default='#00ff00',
-                                states={'draft': [('readonly', False)]})
-    quality_remarks = fields.Html(readonly=True,
-                                  states={'draft': [('readonly', False)]})
-    delay_status = fields.Selection(selection=INDICATOR_STATUS,
-                                    readonly=True,
-                                    states={'draft': [('readonly', False)]})
-    delay_color = fields.Char(readonly=True,
-                              default='#00ff00',
-                              states={'draft': [('readonly', False)]})
-    delay_remarks = fields.Html(readonly=True,
-                                states={'draft': [('readonly', False)]})
-    global_status = fields.Selection(selection=INDICATOR_STATUS,
-                                     readonly=True,
-                                     states={'draft': [('readonly', False)]})
-    global_color = fields.Char(readonly=True,
-                               default='#00ff00',
-                               states={'draft': [('readonly', False)]})
-    global_remarks = fields.Html(readonly=True,
-                                 states={'draft': [('readonly', False)]})
-    risks = fields.Html(readonly=True,
-                        states={'draft': [('readonly', False)]})
-    user_id = fields.Many2one(comodel_name='res.users',
-                              related='project_id.user_id',
-                              store=True,
-                              readonly=True)
-    indicator_ids = fields.One2many('project.status.indicator.value',
-                                    'report_id',
-                                    readonly=True)
+    state = fields.Selection(
+        selection=[('draft', _('Draft')),
+                   ('ready', _('Ready')),
+                   ('published', _('Published'))],
+        string='Status', readonly=True, copy=False,
+        index=True, track_visibility='onchange',
+        default='draft')
+    date = fields.Date(
+        required=True,
+        default=fields.Date.today(),
+        readonly=True,
+        states={'draft': [('readonly', False)]})
+    project_id = fields.Many2one(
+        comodel_name='project.project',
+        string="Project",
+        required=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]})
+    name = fields.Char(
+        compute='_compute_name',
+        store=True,
+        readonly=True,
+        states={'draft': [('readonly', False)]})
+    cost_status = fields.Selection(
+        selection=INDICATOR_STATUS,
+        readonly=True,
+        states={'draft': [('readonly', False)]})
+    cost_color = fields.Char(
+        readonly=True,
+        default='#00ff00',
+        states={'draft': [('readonly', False)]})
+    cost_remarks = fields.Html(
+        readonly=True,
+        states={'draft': [('readonly', False)]})
+    quality_status = fields.Selection(
+        selection=INDICATOR_STATUS,
+        readonly=True,
+        states={'draft': [('readonly', False)]})
+    quality_color = fields.Char(
+        readonly=True,
+        default='#00ff00',
+        states={'draft': [('readonly', False)]})
+    quality_remarks = fields.Html(
+        readonly=True,
+        states={'draft': [('readonly', False)]})
+    delay_status = fields.Selection(
+        selection=INDICATOR_STATUS,
+        readonly=True,
+        states={'draft': [('readonly', False)]})
+    delay_color = fields.Char(
+        readonly=True,
+        default='#00ff00',
+        states={'draft': [('readonly', False)]})
+    delay_remarks = fields.Html(
+        readonly=True,
+        states={'draft': [('readonly', False)]})
+    global_status = fields.Selection(
+        selection=INDICATOR_STATUS,
+        readonly=True,
+        states={'draft': [('readonly', False)]})
+    global_color = fields.Char(
+        readonly=True,
+        default='#00ff00',
+        states={'draft': [('readonly', False)]})
+    global_remarks = fields.Html(
+        readonly=True,
+        states={'draft': [('readonly', False)]})
+    risks = fields.Html(
+        readonly=True,
+        states={'draft': [('readonly', False)]})
+    user_id = fields.Many2one(
+        comodel_name='res.users',
+        related='project_id.user_id',
+        store=True,
+        readonly=True)
+    indicator_ids = fields.One2many(
+        'project.status.indicator.value',
+        'report_id',
+        readonly=True)
     task_snapshot_ids = fields.One2many(
         'project.task.snapshot',
         'report_id',
@@ -92,11 +109,11 @@ class ProjectStatusReport(models.Model):
 
     @api.multi
     def action_confirm(self):
-        self.state = 'ready'
+        self.write({'state': 'ready'})
 
     @api.multi
     def action_validate(self):
-        self.state = 'published'
+        self.write({'state': 'published'})
 
     @api.model
     def compute_indicator_values(self, project, date):

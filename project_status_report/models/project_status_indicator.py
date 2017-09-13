@@ -6,9 +6,10 @@
 from odoo import api, fields, models
 from odoo import _, exceptions
 from odoo import SUPERUSER_ID
+from odoo.tools.safe_eval import safe_eval
+from odoo.exceptions import ValidationError
 
 import sys
-import compiler
 import traceback
 
 from .common import PYTHON_CODE_DEFAULT
@@ -36,34 +37,32 @@ class ProjectStatusIndicator(models.Model):
     @api.multi
     @api.constrains('python_code')
     def _check_python_code_syntax(self):
-        """
-        Syntax check the python code of a step
+        """Syntax check the python code of a step
         """
         for step in self:
             try:
-                compiler.parse(step.python_code)
-            except SyntaxError, exception:
+                eval_context = self._get_eval_context()
+                safe_eval(step.python_code, eval_context, mode="exec",
+                          nocopy=True)
+            except Exception as e:
                 logger.error(''.join(traceback.format_exception(
                     sys.exc_type,
                     sys.exc_value,
                     sys.exc_traceback,
                 )))
-                raise exceptions.ValidationError(
+                raise ValidationError(
                     _('Error in python code for step "%s"'
                       ' at line %d, offset %d:\n%s') % (
                         step.name,
-                        exception.lineno,
-                        exception.offset,
-                        exception.msg,
+                        e.lineno,
+                        e.offset,
+                        e.msg,
                     ))
 
         return True
 
     @api.model
     def _construct_env_dict(self, project, date, **kwargs):
-        """
-
-        """
         analytic_account = project.analytic_account_id
         invoices = self.env['account.invoice.line'].search(
             [('account_analytic_id', '=', analytic_account.id)
