@@ -21,9 +21,9 @@
         # Security
         'security/ir.model.access.csv',
         # Views
-        'views/project.xml',
         'views/project_status_indicator.xml',
         'views/project_status_report.xml',
+        'views/project.xml',
     ],
     "installable": True,
 }

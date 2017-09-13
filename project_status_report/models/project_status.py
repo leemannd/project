@@ -5,7 +5,7 @@
 
 from odoo import api, fields, models
 from odoo import _
-from .common import INDICATOR_STATUS
+from .common import INDICATOR_STATUS, INDICATOR_COLORS
 
 
 class ProjectStatusReport(models.Model):
@@ -23,15 +23,15 @@ class ProjectStatusReport(models.Model):
             rec.name = '%s %s' % (rec.project_id.name or "", rec.date)
 
     state = fields.Selection(
-        selection=[('draft', _('Draft')),
-                   ('ready', _('Ready')),
-                   ('published', _('Published'))],
+        selection=[('draft', 'Draft'),
+                   ('ready', 'Ready'),
+                   ('published', 'Published')],
         string='Status', readonly=True, copy=False,
         index=True, track_visibility='onchange',
         default='draft')
     date = fields.Date(
         required=True,
-        default=fields.Date.today(),
+        default=fields.Date.today,
         readonly=True,
         states={'draft': [('readonly', False)]})
     project_id = fields.Many2one(
@@ -51,8 +51,8 @@ class ProjectStatusReport(models.Model):
         states={'draft': [('readonly', False)]})
     cost_color = fields.Char(
         readonly=True,
-        default='#00ff00',
-        states={'draft': [('readonly', False)]})
+        compute='_compute_colors',
+        store=True)
     cost_remarks = fields.Html(
         readonly=True,
         states={'draft': [('readonly', False)]})
@@ -62,8 +62,8 @@ class ProjectStatusReport(models.Model):
         states={'draft': [('readonly', False)]})
     quality_color = fields.Char(
         readonly=True,
-        default='#00ff00',
-        states={'draft': [('readonly', False)]})
+        compute='_compute_colors',
+        store=True)
     quality_remarks = fields.Html(
         readonly=True,
         states={'draft': [('readonly', False)]})
@@ -73,8 +73,8 @@ class ProjectStatusReport(models.Model):
         states={'draft': [('readonly', False)]})
     delay_color = fields.Char(
         readonly=True,
-        default='#00ff00',
-        states={'draft': [('readonly', False)]})
+        compute='_compute_colors',
+        store=True)
     delay_remarks = fields.Html(
         readonly=True,
         states={'draft': [('readonly', False)]})
@@ -84,8 +84,8 @@ class ProjectStatusReport(models.Model):
         states={'draft': [('readonly', False)]})
     global_color = fields.Char(
         readonly=True,
-        default='#00ff00',
-        states={'draft': [('readonly', False)]})
+        compute='_compute_colors',
+        store=True)
     global_remarks = fields.Html(
         readonly=True,
         states={'draft': [('readonly', False)]})
@@ -108,6 +108,24 @@ class ProjectStatusReport(models.Model):
     )
 
     @api.multi
+    @api.depends(
+        'cost_status', 'quality_status', 'delay_status', 'global_status'
+    )
+    def _compute_colors(self):
+        for status in self:
+            for attr in ['cost', 'quality', 'delay', 'global']:
+                status_value = getattr(status, attr + '_status')
+                setattr(
+                    status,
+                    attr + '_color',
+                    (
+                        INDICATOR_COLORS[status_value]
+                        if status_value
+                        else 'green'
+                    )
+                )
+
+    @api.multi
     def action_confirm(self):
         self.write({'state': 'ready'})
 
@@ -117,6 +135,7 @@ class ProjectStatusReport(models.Model):
 
     @api.model
     def compute_indicator_values(self, project, date):
+        """ Compute indicator values for all indicator defined """
         indicators = self.env['project.status.indicator.value'].browse()
         for indicator in self.env['project.status.indicator'].search([]):
             indicators |= indicator.compute_value(project, date)
@@ -124,6 +143,7 @@ class ProjectStatusReport(models.Model):
 
     @api.model
     def create_task_snapshots(self, project):
+        """ Compute task snapshots for all tasks defined on the project """
         tasks = self.env['project.task.snapshot'].browse()
         task_snap_obj = self.env['project.task.snapshot']
         for task in project.task_ids:

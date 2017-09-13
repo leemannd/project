@@ -35,12 +35,8 @@ class ProjectTaskSnapshot(models.Model):
         """
         prepare dict value to make a snapshot of a task
         """
-        res = {field: task[field]
-               for field, ftype in TASK_FIELDS_TO_SYNC.iteritems()
-               if ftype == 'simple'}
-        res.update({field: task[field].id
-                    for field, ftype in TASK_FIELDS_TO_SYNC.iteritems()
-                    if ftype == 'm2o'})
+        res = task.read(TASK_FIELDS_TO_SYNC.keys(), load='_classic_write')[0]
+        del res['id']
         return res
 
     @api.onchange('task_id')
@@ -57,9 +53,12 @@ class ProjectTaskSnapshot(models.Model):
         """
         if self.env.user.id != SUPERUSER_ID:
             if not self.env.context.get('status_report_creation', False):
-                # TODO: check if AccessDenied or UserError ?
                 raise exceptions.AccessDenied(
-                    _('User %s tried to create a record') % self.env.user.id)
+                    _(
+                        'User %s (id %s) is not allowed '
+                        'to create an task snapshot'
+                    ) % (self.env.user.name, self.env.uid)
+                )
 
         record = super(ProjectTaskSnapshot, self).create(values)
         record.onchange_task_id()
@@ -73,7 +72,10 @@ class ProjectTaskSnapshot(models.Model):
         """
         if self.env.user.id != SUPERUSER_ID:
             if not self.env.context.get('status_report_creation', False):
-                # TODO: check if AccessDenied or UserError ?
                 raise exceptions.AccessDenied(
-                    _('User %s tried to create a record') % self.env.user.id)
+                    _(
+                        'User %s (id %s) is not allowed '
+                        'to write an task snapshot'
+                    ) % (self.env.user.name, self.env.uid)
+                )
         return super(ProjectTaskSnapshot, self).write(values)

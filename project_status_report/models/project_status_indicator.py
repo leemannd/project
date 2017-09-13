@@ -5,11 +5,10 @@
 
 from odoo import api, fields, models
 from odoo import _, exceptions
-from odoo import SUPERUSER_ID
 from odoo.tools.safe_eval import safe_eval
-from odoo.exceptions import ValidationError
 
 import sys
+import compiler
 import traceback
 
 from .common import PYTHON_CODE_DEFAULT
@@ -37,26 +36,28 @@ class ProjectStatusIndicator(models.Model):
     @api.multi
     @api.constrains('python_code')
     def _check_python_code_syntax(self):
-        """Syntax check the python code of a step
+        """
+        Syntax check the python code of a step
         """
         for step in self:
             try:
-                eval_context = self._get_eval_context()
-                safe_eval(step.python_code, eval_context, mode="exec",
-                          nocopy=True)
-            except Exception as e:
+                # Here we just want to check the code is interpretable,
+                # but we don't want to execute it.
+                # So compiler.parse is a good way to that.
+                compiler.parse(step.python_code)
+            except SyntaxError, exception:
                 logger.error(''.join(traceback.format_exception(
                     sys.exc_type,
                     sys.exc_value,
                     sys.exc_traceback,
                 )))
-                raise ValidationError(
+                raise exceptions.ValidationError(
                     _('Error in python code for step "%s"'
                       ' at line %d, offset %d:\n%s') % (
                         step.name,
-                        e.lineno,
-                        e.offset,
-                        e.msg,
+                        exception.lineno,
+                        exception.offset,
+                        exception.msg,
                     ))
 
         return True
@@ -99,7 +100,10 @@ class ProjectStatusIndicator(models.Model):
     def compute_value(self, project, date):
         ld = self._construct_env_dict(project, date)
 
-        exec self.python_code in ld
+        safe_eval(self.python_code.strip(), ld,
+                  mode="exec", nocopy=True)
+        ld.get('color', None)
+        ld.get('value', None)
 
         vals = {
             'indicator_id': self.id,
@@ -122,7 +126,7 @@ class ProjectStatusIndicatorValue(models.Model):
     @api.depends('value_type', 'value_boolean', 'value_numeric', 'value_text')
     def _compute_display_value(self):
         for rec in self:
-            rec.display_value = '%s' % rec['value_'+rec.value_type]
+            rec.display_value = str(rec['value_' + rec.value_type])
 
     indicator_id = fields.Many2one(comodel_name='project.status.indicator',
                                    required=True)
@@ -162,11 +166,14 @@ class ProjectStatusIndicatorValue(models.Model):
             allow users != admin to create records only if the context
             contains the key 'status_report_creation'=True
         """
-        if self.env.user.id != SUPERUSER_ID:
+        if self.env.user._is_superuser():
             if not self.env.context.get('status_report_creation', False):
-                # TODO: check if AccessDenied or UserError ?
                 raise exceptions.AccessDenied(
-                    _('User %s tried to create a record') % self.env.user.id)
+                    _(
+                        'User %s (id %s) is not allowed '
+                        'to create an indicator value'
+                    ) % (self.env.user.name, self.env.uid)
+                )
 
         return super(ProjectStatusIndicatorValue, self).create(values)
 
@@ -176,9 +183,12 @@ class ProjectStatusIndicatorValue(models.Model):
         allow users != admin to write records only if the context
         contains the key 'status_report_creation'=True
         """
-        if self.env.user.id != SUPERUSER_ID:
+        if self.env.user._is_superuser():
             if not self.env.context.get('status_report_creation', False):
-                # TODO: check if AccessDenied or UserError ?
                 raise exceptions.AccessDenied(
-                    _('User %s tried to create a record') % self.env.user.id)
+                    _(
+                        'User %s (id %s) is not allowed '
+                        'to write an indicator value'
+                    ) % (self.env.user.name, self.env.uid)
+                )
         return super(ProjectStatusIndicatorValue, self).write(values)

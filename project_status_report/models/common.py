@@ -26,10 +26,16 @@ PYTHON_CODE_DEFAULT = """
 
 """
 
-INDICATOR_STATUS = [('ok', _('OK')),
-                    ('attention', _('Attention')),
-                    ('alert', _('Alert')),
+INDICATOR_STATUS = [('ok', 'OK'),
+                    ('attention', 'Attention'),
+                    ('alert', 'Alert'),
                     ]
+
+INDICATOR_COLORS = {
+    'ok': 'green',
+    'attention': 'orange',
+    'alert': 'red',
+}
 
 TASK_FIELDS_TO_SYNC = {
     'user_id': 'm2o',

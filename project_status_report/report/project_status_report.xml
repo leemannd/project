@@ -10,13 +10,14 @@
 
                     <table width="100%">
                         <tr>
-                            <td width="50%"><b><span t-field="o.name"/></b></td>
-                            <td width="50%" style="text-align: right;"><span t-field="o.state"/></td>
+                            <td width="50%"><h4 style="border-style:solid;border-width:1px;"><b><center><span t-field="o.name"/></center></b></h4></td>
+                            <td width="40"/>
+                            <td width="10%" style="text-align: right;"><h4 style="border-style:solid;border-width:1px;"><center><span t-field="o.state"/></center></h4></td>
                         </tr>
                     </table>
 
 
-                    <h2 style="border-style:solid;border-width:1px;">Project evaluation sheet</h2>
+                    <h2 style="border-style:solid;border-width:1px;background-color:lightgrey;">Project evaluation sheet</h2>
 
                     <br/>
 
@@ -45,7 +46,7 @@
 
                     <br/>
 
-                    <h3 style="border-style:solid;border-width:1px;">Project indicators</h3>
+                    <h3 style="border-style:solid;border-width:1px;background-color:lightgrey;">Project indicators</h3>
 
                     <br/>
 
