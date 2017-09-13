@@ -20,26 +20,26 @@
 
                     <br/>
 
-                    <t t-foreach="o.get_evaluation_indicators_for_report()" t-as="evaluation_indicator">
-                        <table width="100%">
+                    <table width="100%" style="border-collapse:separate;border-spacing:10px;">
+                        <t t-foreach="o.get_evaluation_indicators_for_report()" t-as="evaluation_indicator">
                             <tr>
-                                <td width="10%" style="vertical-align:middle;"><span t-esc="evaluation_indicator[0]"/></td>
-                                <td width="5%" style="vertical-align:middle;">
-                                    <span t-att-style="'background-color:' + evaluation_indicator[1] + ';display: block;width: 30px;height: 30px;cursor: pointer;'"/>
+                                <td width="10%" style="vertical-align:top;"><span t-esc="evaluation_indicator[0]"/></td>
+                                <td width="10%">
+                                    <span t-att-style="'background-color:' + evaluation_indicator[1] + ';display: block;width: 50px;height: 50px;cursor: pointer;'"/>
                                 </td>
-                                <td width="15%" style="text-align: center;vertical-align:middle;">Remarks</td>
-                                <td width="70%" style="border-style:solid;border-width:1px;"><t t-raw="evaluation_indicator[2]"/></td>
+                                <td width="80%" style="border-style:solid;border-width:1px;padding: 7px;vertical-align:middle;"><t t-raw="evaluation_indicator[2]"/></td>
                             </tr>
-                        </table>
-                        <br/>
-                    </t>
+                        </t>
+                    </table>
 
                     <br/>
 
-                    <table width="100%">
+                    <table width="100%" style="border-collapse:separate;border-spacing:10px;">
                         <tr>
-                            <td width="10%">Risks</td>
-                            <td width="90%" style="border-style:solid;border-width:1px;vertical-align:middle;"><t t-raw="o.risks"/></td>
+                            <td>Risks</td>
+                        </tr>
+                        <tr>
+                            <td style="border-style:solid;border-width:1px;vertical-align:middle;padding: 7px;"><t t-raw="o.risks"/></td>
                         </tr>
                     </table>
 
@@ -56,46 +56,36 @@
                         a  b
                         c  d
                         e
-
-                        The foreach value will transform project indicators list to do that.
-                        Example: [a, b, c, d, e] ==> [[a, b], [c, d], [e]]
                     -->
-                    <t t-foreach="[o.indicator_ids[i:i+2] for i in xrange(0, len(o.indicator_ids), 2)]" t-as="project_indicator_lines">
-                        <table width="100%">
-                            <tr>
-                                <!-- First project indicator in first column -->
-                                <t t-call="project_status_report.project_status_report_project_indicator_line">
-                                    <t t-set="project_indicator_line" t-value="project_indicator_lines[0]"/>
-                                </t>
-                                <!-- Space with columns -->
+
+                    <table width="100%" style="border-collapse:separate;border-spacing:10px;">
+                        <t t-foreach="o.indicator_ids" t-as="project_indicator">
+                            <t t-if="project_indicator_even">
+                                &lt;tr&gt;
+                            </t>
+                            <td width="35%"><span t-esc="project_indicator.name"/></td>
+                            <td width="10%" t-att-style="'border-color:' + project_indicator.color + ';border-style:solid;border-width:2px;text-align: center;'">
+                                <span t-esc="project_indicator.display_value"/>
+                            </td>
+                            <t t-if="project_indicator_even">
+                                <!-- Space between columns -->
                                 <td width="10%"/>
-                                <!-- Second project indicator in second column (if we have second project indicator in line) -->
-                                <t t-if="len(project_indicator_lines) == 2">
-                                    <t t-call="project_status_report.project_status_report_project_indicator_line">
-                                        <t t-set="project_indicator_line" t-value="project_indicator_lines[1]"/>
-                                    </t>
-                                </t>
-                                <!-- Empty second column (if we don't have second project indicator in line) -->
-                                <t t-if="len(project_indicator_lines) == 1">
+                                <t t-if="project_indicator_last">
+                                    <!-- Empty columns (if the last project indicator is at left) -->
                                     <td width="35%"/>
                                     <td width="10%"/>
                                 </t>
-                            </tr>
-                        </table>
-                        <br/>
-                    </t>
+                            </t>
+                            <t t-if="project_indicator_odd">
+                                &lt;/tr&gt;
+                            </t>
+                        </t>
+                    </table>
 
                 </div>
             </t>
 
         </t>
-    </template>
-
-    <template id="project_status_report_project_indicator_line" name="project_status_report_project_indicator_line">
-        <td width="35%"><span t-esc="project_indicator_line.name"/></td>
-        <td width="10%" t-att-style="'border-color:' + project_indicator_line.color + ';border-style:solid;border-width:2px;text-align: center;'">
-            <span t-esc="project_indicator_line.display_value"/>
-        </td>
     </template>
 
     <report
