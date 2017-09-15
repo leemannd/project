@@ -17,14 +17,14 @@
                     </table>
 
 
-                    <h2 style="border-style:solid;border-width:1px;background-color:lightgrey;">Project evaluation sheet</h2>
+                    <h3 style="border-style:solid;border-width:1px;background-color:lightgrey;padding:5px;">Project evaluation sheet</h3>
 
                     <br/>
 
                     <table width="100%" style="border-collapse:separate;border-spacing:10px;">
                         <t t-foreach="o.get_evaluation_indicators_for_report()" t-as="evaluation_indicator">
                             <tr>
-                                <td width="10%" style="vertical-align:top;"><span t-esc="evaluation_indicator[0]"/></td>
+                                <td width="10%" style="vertical-align:top;"><strong><span t-esc="evaluation_indicator[0]"/></strong></td>
                                 <td width="10%">
                                     <span t-att-style="'background-color:' + evaluation_indicator[1] + ';display: block;width: 50px;height: 50px;cursor: pointer;'"/>
                                 </td>
@@ -46,7 +46,7 @@
 
                     <br/>
 
-                    <h3 style="border-style:solid;border-width:1px;background-color:lightgrey;">Project indicators</h3>
+                    <h3 style="border-style:solid;border-width:1px;background-color:lightgrey;padding:5px;">Project indicators</h3>
 
                     <br/>
 

@@ -8,13 +8,13 @@
             <form>
                 <header>
                     <button name="action_confirm"
-                    string="Ready"
-                    type="object"
-                    states="draft" />
+                            string="Ready"
+                            type="object"
+                            states="draft" />
                     <button name="action_validate"
-                    string="Publish"
-                    type="object"
-                    states="ready" />
+                            string="Publish"
+                            type="object"
+                            states="ready" />
                     <field name="state" widget="statusbar" statusbar_visible="draft,ready,published"/>
                 </header>
                 <sheet>
@@ -25,68 +25,76 @@
                         <field name="project_id"/>
                         <field name="date"/>
                     </group>
-                    <group colspan="4" string="Cost" col="12" name="cost">
-                        <group colspan="4">
-                            <field name="cost_status" string="Status"/>
-                            <field name="cost_color" widget="color"/>
-                        </group>
-                        <group colspan="8">
-                            <field name="cost_remarks" string="Remarks"/>
-                        </group>
-                    </group>
-                    <group colspan="4" string="Quality" col="12" name="quality">
-                        <group colspan="4">
-                            <field name="quality_status" string="Status"/>
-                            <field name="quality_color" widget="color"/>
-                        </group>
-                        <group colspan="8">
-                            <field name="quality_remarks" string="Remarks"/>
-                        </group>
-                    </group>
-                    <group colspan="4" string="Delay" col="12" name="delay">
-                        <group colspan="4">
-                            <field name="delay_status" string="Status"/>
-                            <field name="delay_color" widget="color"/>
-                        </group>
-                        <group colspan="8">
-                            <field name="delay_remarks" string="Remarks"/>
-                        </group>
-                    </group>
-                    <group colspan="4" string="Global" col="12" name="global">
-                        <group colspan="4">
-                            <field name="global_status" string="Status"/>
-                            <field name="global_color" widget="color"/>
-                        </group>
-                        <group colspan="8">
-                            <field name="global_remarks" string="Remarks"/>
-                        </group>
-                    </group>
-
-                    <group>
-                        <label for="risks"/>
-                        <field name="risks" nolabel="1"/>
-
-                        <label for="indicator_ids"/>
-                        <field name="indicator_ids" nolabel="1">
-                            <tree>
-                                <field name="name"/>
-                                <field name="display_value"/>
-                                <field name="color" widget="color"/>
-                            </tree>
-                        </field>
-
-                        <label for="task_snapshot_ids"/>
-                        <field name="task_snapshot_ids" nolabel="1">
-                            <tree>
-                                <field name="task_id"/>
-                                <field name="user_id"/>
-                                <field name="planned_hours"/>
-                                <field name="progress" widget="progressbar"/>
-                                <field name="kanban_state"/>
-                                <field name="stage_id"/>
-                            </tree>
-                        </field>
-                    </group>
+                    <notebook>
+                        <page string="Evaluation">
+                            <group col="8" string="Cost" name="cost">
+                                <group colspan="4" col="4">
+                                    <field name="cost_status" string="Status"/>
+                                    <field name="cost_color" widget="color" nolabel="1"/>
+                                </group>
+                                <group colspan="4"/>
+                                <group colspan="8" col="4">
+                                    <field name="cost_remarks" nolabel="1"/>
+                                </group>
+                            </group>
+                            <group col="8" string="Quality" name="quality">
+                                <group colspan="4" col="4">
+                                    <field name="quality_status" string="Status"/>
+                                    <field name="quality_color" widget="color" nolabel="1"/>
+                                </group>
+                                <group colspan="4"/>
+                                <group colspan="8" col="4">
+                                    <field name="quality_remarks" nolabel="1"/>
+                                </group>
+                            </group>
+                            <group col="8" string="Delay" name="delay">
+                                <group colspan="4" col="4">
+                                    <field name="delay_status" string="Status"/>
+                                    <field name="delay_color" widget="color" nolabel="1"/>
+                                </group>
+                                <group colspan="4"/>
+                                <group colspan="8" col="4">
+                                    <field name="delay_remarks" nolabel="1"/>
+                                </group>
+                            </group>
+                            <group col="8" string="Global" name="global">
+                                <group colspan="4" col="4">
+                                    <field name="global_status" string="Status"/>
+                                    <field name="global_color" widget="color" nolabel="1"/>
+                                </group>
+                                <group colspan="4"/>
+                                <group colspan="8" col="4">
+                                    <field name="global_remarks" nolabel="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Indicators">
+                            <group>
+                                <field name="indicator_ids" nolabel="1" colspan="4">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="display_value"/>
+                                        <field name="color" widget="color"/>
+                                    </tree>
+                                </field>
+                                <field name="task_snapshot_ids" nolabel="1" invisible="1">
+                                    <tree>
+                                        <field name="task_id"/>
+                                        <field name="user_id"/>
+                                        <field name="planned_hours"/>
+                                        <field name="progress" widget="progressbar"/>
+                                        <field name="kanban_state"/>
+                                        <field name="stage_id"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
+                        <page string="Risks">
+                            <group>
+                                <field name="risks" nolabel="1"/>
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
@@ -144,7 +152,7 @@
         <field name="context">{
             'search_default_project_id': [active_id],
             'default_project_id': active_id,
-        }</field>
+            }</field>
         <field name="search_view_id" ref="view_status_report_search_form"/>
     </record>
 

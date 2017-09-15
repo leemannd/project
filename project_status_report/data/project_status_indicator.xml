@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<odoo>
+<odoo noupdate="1">
     <record id="indicator_total_sale_amount" model="project.status.indicator">
         <field name="name">Total sale amount</field>
         <field name="sequence" eval="10"/>
         <field name="value_type">numeric</field>
         <field name="python_code">
 if sales:
-     value = sum(sales.amount_total)
+     value = sum(s.amount_total for s in sales)
      color = '#0A55EE'
 else:
     value = 0.0
@@ -21,7 +21,7 @@ else:
         <field name="value_type">numeric</field>
         <field name="python_code">
 if invoices:
-    value = sum(invoices.amount_total)
+    value = sum(i.amount_total for i in invoices)
     color = "#123456"
 else:
    value = 0.0
