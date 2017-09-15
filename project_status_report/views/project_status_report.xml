@@ -107,11 +107,11 @@
             <tree>
                 <field name="project_id"/>
                 <field name="date"/>
-                <field name="cost_color" widget="color"/>
-                <field name="quality_color" widget="color"/>
-                <field name="delay_color" widget="color"/>
-                <field name="global_color" widget="color"/>
-                <field name="state" widget="color"/>
+                <field name="cost_color" widget="color" string="Cost"/>
+                <field name="quality_color" widget="color" string="Qualité"/>
+                <field name="delay_color" widget="color" string="Délai"/>
+                <field name="global_color" widget="color" string="Global"/>
+                <field name="state"/>
                 <field name="user_id" invisible="1"/>
             </tree>
         </field>
