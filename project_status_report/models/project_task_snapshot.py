@@ -12,12 +12,14 @@ from .common import TASK_FIELDS_TO_SYNC
 class ProjectTaskSnapshot(models.Model):
     _name = 'project.task.snapshot'
 
-    report_id = fields.Many2one(comodel_name='project.status.report')
+    report_id = fields.Many2one(comodel_name='project.status.report',
+                                string='Report')
     project_id = fields.Many2one(comodel_name='project.project',
                                  related='report_id.project_id',
                                  store=True,
                                  readonly=True)
     task_id = fields.Many2one(comodel_name='project.task',
+                              string='Task',
                               required=True,)
     name = fields.Char(related='task_id.name', readonly=True)
     user_id = fields.Many2one(comodel_name='res.users', string='User')
@@ -29,7 +31,8 @@ class ProjectTaskSnapshot(models.Model):
                                      ('blocked', 'Blocked')],
                                     string='Kanban State',
                                     )
-    stage_id = fields.Many2one(comodel_name='project.task.type')
+    stage_id = fields.Many2one(comodel_name='project.task.type',
+                               string='Stage')
 
     def _prepare_update_vals(self, task):
         """

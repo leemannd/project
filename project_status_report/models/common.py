@@ -27,14 +27,14 @@ PYTHON_CODE_DEFAULT = """
 """
 
 INDICATOR_STATUS = [('ok', 'OK'),
-                    ('attention', 'Attention'),
-                    ('alert', 'Alert'),
+                    ('to_monitor', 'To monitor'),
+                    ('warning', 'Warning'),
                     ]
 
 INDICATOR_COLORS = {
     'ok': 'green',
-    'attention': 'orange',
-    'alert': 'red',
+    'to_monitor': 'orange',
+    'warning': 'red',
 }
 
 TASK_FIELDS_TO_SYNC = {

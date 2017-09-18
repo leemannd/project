@@ -22,8 +22,13 @@ class ProjectStatusIndicator(models.Model):
 
     _order = 'sequence'
 
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
     name = fields.Char(required=True, translate=True)
-    report_id = fields.Many2one(comodel_name='project.status.report')
+    report_id = fields.Many2one(comodel_name='project.status.report',
+                                string='Report')
     sequence = fields.Integer(default=10)
     value_type = fields.Selection(selection=[('numeric', _('Numeric')),
                                              ('boolean', _('Boolean')),
@@ -129,11 +134,14 @@ class ProjectStatusIndicatorValue(models.Model):
             rec.display_value = str(rec['value_' + rec.value_type])
 
     indicator_id = fields.Many2one(comodel_name='project.status.indicator',
-                                   required=True)
+                                   required=True,
+                                   string='Indicator')
     report_id = fields.Many2one(comodel_name='project.status.report',
+                                string='Report',
                                 )
     project_id = fields.Many2one(comodel_name='project.project',
                                  related='report_id.project_id',
+                                 string='Project',
                                  store=True,
                                  readonly=True)
     date = fields.Date(related='report_id.date',

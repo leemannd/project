@@ -95,15 +95,18 @@ class ProjectStatusReport(models.Model):
     user_id = fields.Many2one(
         comodel_name='res.users',
         related='project_id.user_id',
+        string='User',
         store=True,
         readonly=True)
     indicator_ids = fields.One2many(
         'project.status.indicator.value',
         'report_id',
+        string='Indicators',
         readonly=True)
     task_snapshot_ids = fields.One2many(
         'project.task.snapshot',
         'report_id',
+        string='Task snapshots',
         readonly=True
     )
 
