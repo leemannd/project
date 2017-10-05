@@ -139,9 +139,9 @@ class ProjectStatusReport(models.Model):
     @api.model
     def compute_indicator_values(self, project, date):
         """ Compute indicator values for all indicator defined """
-        indicators = self.env['project.status.indicator.value'].browse()
+        indicators = []
         for indicator in self.env['project.status.indicator'].search([]):
-            indicators |= indicator.compute_value(project, date)
+            indicators.append((0, 0, indicator.compute_value(project, date)))
         return indicators
 
     @api.model
@@ -199,12 +199,13 @@ class ProjectStatusReport(models.Model):
         indicator_values = self.compute_indicator_values(project,
                                                          values['date'])
         update_dict = {
-            'indicator_ids': [(6, 0, indicator_values.ids)],
+            'indicator_ids': indicator_values,
             'task_snapshot_ids': [(6, 0, task_snapshots.ids)],
         }
 
         update_dict.update(values)
         update_dict.update(self.compute_last_statuses(project))
+
         report = super(ProjectStatusReport, self).create(update_dict)
 
         return report

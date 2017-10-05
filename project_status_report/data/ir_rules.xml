@@ -23,8 +23,8 @@
         <field name="model_id" ref="model_project_status_indicator_value"/>
         <field name="global" eval="True"/>
         <field name="domain_force">['|',
-                                    ('project_id.company_id', '=', False),
-                                    ('project_id.company_id', 'child_of', [user.company_id.id]),
+                                    ('report_id.project_id.company_id', '=', False),
+                                    ('report_id.project_id.company_id', 'child_of', [user.company_id.id]),
                                     ]</field>
     </record>
 

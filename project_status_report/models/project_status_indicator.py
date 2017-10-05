@@ -27,8 +27,6 @@ class ProjectStatusIndicator(models.Model):
         default=True,
     )
     name = fields.Char(required=True, translate=True)
-    report_id = fields.Many2one(comodel_name='project.status.report',
-                                string='Report')
     sequence = fields.Integer(default=10)
     value_type = fields.Selection(selection=[('numeric', _('Numeric')),
                                              ('boolean', _('Boolean')),
@@ -112,15 +110,11 @@ class ProjectStatusIndicator(models.Model):
 
         vals = {
             'indicator_id': self.id,
-            'report_id': self.report_id.id,
             'color': ld.get('color', '#00FF00'),
             ('value_%s' % self.value_type): ld.get('value', None),
         }
 
-        indicator_value = self.env[
-            'project.status.indicator.value'].create(vals)
-
-        return indicator_value
+        return vals
 
 
 class ProjectStatusIndicatorValue(models.Model):
@@ -138,6 +132,7 @@ class ProjectStatusIndicatorValue(models.Model):
                                    string='Indicator')
     report_id = fields.Many2one(comodel_name='project.status.report',
                                 string='Report',
+                                ondelete='cascade',
                                 )
     project_id = fields.Many2one(comodel_name='project.project',
                                  related='report_id.project_id',
