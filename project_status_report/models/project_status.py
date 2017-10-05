@@ -130,7 +130,10 @@ class ProjectStatusReport(models.Model):
 
     @api.multi
     def action_confirm(self):
-        self.write({'state': 'ready'})
+        self.write({
+            'state': 'ready',
+            'date': fields.Date.today(),
+        })
 
     @api.multi
     def action_validate(self):

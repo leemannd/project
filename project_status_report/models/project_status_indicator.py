@@ -30,7 +30,8 @@ class ProjectStatusIndicator(models.Model):
     sequence = fields.Integer(default=10)
     value_type = fields.Selection(selection=[('numeric', _('Numeric')),
                                              ('boolean', _('Boolean')),
-                                             ('text', _('Text'))
+                                             ('text', _('Text')),
+                                             ('date', _('Date')),
                                              ],
                                   required=True,
                                   )
@@ -122,7 +123,13 @@ class ProjectStatusIndicatorValue(models.Model):
 
     _order = 'project_id, date, sequence'
 
-    @api.depends('value_type', 'value_boolean', 'value_numeric', 'value_text')
+    @api.depends(
+        'value_type',
+        'value_boolean',
+        'value_numeric',
+        'value_text',
+        'value_date',
+    )
     def _compute_display_value(self):
         for rec in self:
             rec.display_value = str(rec['value_' + rec.value_type])
@@ -155,6 +162,7 @@ class ProjectStatusIndicatorValue(models.Model):
     value_numeric = fields.Float()
     value_boolean = fields.Boolean()
     value_text = fields.Text()
+    value_date = fields.Date()
     display_value = fields.Char(string='Value',
                                 compute='_compute_display_value')
     color = fields.Char(size=7, required=True)
