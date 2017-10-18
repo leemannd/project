@@ -56,7 +56,7 @@ class ProjectTaskSnapshot(models.Model):
         """
         if self.env.user.id != SUPERUSER_ID:
             if not self.env.context.get('status_report_creation', False):
-                raise exceptions.AccessDenied(
+                raise exceptions.AccessError(
                     _(
                         'User %s (id %s) is not allowed '
                         'to create an task snapshot'
@@ -75,7 +75,7 @@ class ProjectTaskSnapshot(models.Model):
         """
         if self.env.user.id != SUPERUSER_ID:
             if not self.env.context.get('status_report_creation', False):
-                raise exceptions.AccessDenied(
+                raise exceptions.AccessError(
                     _(
                         'User %s (id %s) is not allowed '
                         'to write an task snapshot'

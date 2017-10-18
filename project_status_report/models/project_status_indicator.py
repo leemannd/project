@@ -179,7 +179,7 @@ class ProjectStatusIndicatorValue(models.Model):
         """
         if self.env.user._is_superuser():
             if not self.env.context.get('status_report_creation', False):
-                raise exceptions.AccessDenied(
+                raise exceptions.AccessError(
                     _(
                         'User %s (id %s) is not allowed '
                         'to create an indicator value'
@@ -196,7 +196,7 @@ class ProjectStatusIndicatorValue(models.Model):
         """
         if self.env.user._is_superuser():
             if not self.env.context.get('status_report_creation', False):
-                raise exceptions.AccessDenied(
+                raise exceptions.AccessError(
                     _(
                         'User %s (id %s) is not allowed '
                         'to write an indicator value'
