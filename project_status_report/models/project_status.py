@@ -136,6 +136,12 @@ class ProjectStatusReport(models.Model):
         })
 
     @api.multi
+    def action_draft(self):
+        self.write({
+            'state': 'draft',
+        })
+
+    @api.multi
     def action_validate(self):
         self.write({'state': 'published'})
 

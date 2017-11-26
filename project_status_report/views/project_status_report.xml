@@ -11,6 +11,10 @@
                             string="Ready"
                             type="object"
                             states="draft" />
+                    <button name="action_draft"
+                            string="Put in draft"
+                            type="object"
+                            states="ready,published" />
                     <button name="action_validate"
                             string="Publish"
                             type="object"
