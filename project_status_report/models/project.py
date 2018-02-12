@@ -27,7 +27,7 @@ class ProjectProject(models.Model):
         report_obj = self.env['project.status.report']
         today = fields.Date.today()
         for project in self:
-            report_obj.sudo().with_context(status_report_creation=True).create(
+            report_obj.with_context(status_report_creation=True).create(
                 {
                     'date': today,
                     'project_id': project.id,

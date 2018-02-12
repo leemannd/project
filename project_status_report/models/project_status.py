@@ -205,7 +205,7 @@ class ProjectStatusReport(models.Model):
         project = self.env['project.project'].browse(values['project_id'])
 
         task_snapshots = self.create_task_snapshots(project)
-        indicator_values = self.compute_indicator_values(project,
+        indicator_values = self.sudo().compute_indicator_values(project,
                                                          values['date'])
         update_dict = {
             'indicator_ids': indicator_values,
