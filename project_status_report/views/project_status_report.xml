@@ -26,8 +26,12 @@
                         <field name="name"/>
                     </h1>
                     <group>
-                        <field name="project_id"/>
-                        <field name="date"/>
+                        <group>
+                            <field name="project_id"/>
+                        </group>
+                        <group>
+                            <field name="date"/>
+                        </group>
                     </group>
                     <notebook>
                         <page string="Evaluation">
